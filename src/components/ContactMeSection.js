@@ -28,22 +28,24 @@ const LandingSection = () => {
             type: "",
             comment: "",
         },
+        onSubmit: (values) => {
+            submit('https://example.com/contactme', values)
+        },
         validationSchema: Yup.object({
             firstName: Yup.string().required("First name is required"),
             email: Yup.string().email("Invalid email format").required("Email is required"),
             type: Yup.string().required("Please select an enquiry type"),
             comment: Yup.string().required("Please enter your message"),
         }),
-        onSubmit: (values) => {
-            const errors = formik.errors;
-            if (Object.keys(errors).length > 0) {
-                console.log(errors);
-                onOpen({ message: values.message, type: "error" });
-            }
-            onOpen({ message: values.message, type: "success" });
-            // formik.resetForm();
-        }
     });
+    useEffect(() => {
+        if (response) {
+            onOpen(response.type, response.message);
+            if (response.type === 'success') {
+                formik.resetForm();
+            }
+        }
+    }, [response]);
 
     return (
         <FullScreenSection
